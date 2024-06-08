@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "349104298564",
+    "project_id": "vehiclerentingproject",
+    "storage_bucket": "vehiclerentingproject.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:349104298564:android:3dd7db64e696352ce0ba11",
+        "android_client_info": {
+          "package_name": "com.android.application"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBAQanbszFZ5an3HLzqial47_OJcAQh8yE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:349104298564:android:ba9faa43faa5ab5fe0ba11",
+        "android_client_info": {
+          "package_name": "com.example.vehiclerent"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBAQanbszFZ5an3HLzqial47_OJcAQh8yE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
