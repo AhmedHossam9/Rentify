@@ -5,10 +5,10 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:vehiclerent/widgets/custom_bottom_nav_bar.dart';
-import 'package:vehiclerent/EditProfile.dart';
-import 'package:vehiclerent/RentalRequest.dart';
-import 'package:vehiclerent/RentedVehicles.dart';
-import 'package:vehiclerent/ListVehicle.dart'; // Import ListVehicle.dart
+import 'package:vehiclerent/functions/EditProfile.dart';
+import 'package:vehiclerent/rentrelated/RentalRequest.dart';
+import 'package:vehiclerent/rentrelated/RentedVehicles.dart';
+import 'package:vehiclerent/rentrelated/ListVehicle.dart';
 import 'package:vehiclerent/providers/theme_provider.dart';
 import 'dart:io';
 

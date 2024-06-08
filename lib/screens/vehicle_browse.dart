@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:vehiclerent/widgets/custom_bottom_nav_bar.dart';
-import 'package:vehiclerent/rent_related/RentVehicle.dart';
-import 'package:vehiclerent/functions/contact.dart';
+import 'package:vehiclerent/rentrelated/RentVehicle.dart';
+import 'package:vehiclerent/functions/Contact.dart';
 import 'package:vehiclerent/widgets/custom_search_bar.dart';
-import 'package:vehiclerent/widgets/vehicle_card.dart';
 
 class VehicleBrowse extends StatefulWidget {
   final int currentIndex;
@@ -104,31 +103,52 @@ class _VehicleBrowseState extends State<VehicleBrowse> {
     await vehicleDoc.update({'favorite_by': favoriteBy});
   }
 
-  Future<String> _getOrCreateChatId(
-      String currentUserId, String otherUserId) async {
-    String chatId;
+  Future<void> _contactOwner(BuildContext context, String otherUserId) async {
+    var chatId;
 
-    QuerySnapshot chatQuery = await FirebaseFirestore.instance
+    // Check for existing chat
+    var chatQuery = await FirebaseFirestore.instance
         .collection('chats')
-        .where('participants', arrayContains: currentUserId)
+        .where('participants', arrayContainsAny: [
+          FirebaseAuth.instance.currentUser!.uid,
+          otherUserId
+        ])
+        .limit(1)
         .get();
 
-    for (var doc in chatQuery.docs) {
-      List participants = doc['participants'];
-      if (participants.contains(otherUserId)) {
-        chatId = doc.id;
-        return chatId;
-      }
+    if (chatQuery.docs.isNotEmpty) {
+      chatId = chatQuery.docs.first.id;
+    } else {
+      // Create new chat
+      var newChatDoc =
+          await FirebaseFirestore.instance.collection('chats').add({
+        'participants': [FirebaseAuth.instance.currentUser!.uid, otherUserId],
+        'lastMessage': '',
+        'lastMessageTimestamp': FieldValue.serverTimestamp(),
+      });
+      chatId = newChatDoc.id;
     }
 
-    DocumentReference newChatDoc =
-        await FirebaseFirestore.instance.collection('chats').add({
-      'participants': [currentUserId, otherUserId],
-      'createdAt': FieldValue.serverTimestamp(),
-    });
+    // Fetch other user details
+    var userDoc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(otherUserId)
+        .get();
 
-    chatId = newChatDoc.id;
-    return chatId;
+    if (userDoc.exists) {
+      var userData = userDoc.data() as Map<String, dynamic>;
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => Contact(
+            chatId: chatId,
+            otherUserId: otherUserId,
+            otherUserName: userData['username'] ?? 'Unknown',
+            otherUserPhoneNumber: userData['phone_number'] ?? 'N/A',
+          ),
+        ),
+      );
+    }
   }
 
   List<DocumentSnapshot> _filterVehicles(List<DocumentSnapshot> vehicles) {
@@ -196,16 +216,7 @@ class _VehicleBrowseState extends State<VehicleBrowse> {
                   SizedBox(width: 10),
                   ElevatedButton(
                     onPressed: () {
-                      setState(() {
-                        searchQuery = searchController.text;
-                        minPrice = minPriceController.text.isNotEmpty
-                            ? double.tryParse(minPriceController.text)
-                            : null;
-                        maxPrice = maxPriceController.text.isNotEmpty
-                            ? double.tryParse(maxPriceController.text)
-                            : null;
-                        selectedCategory = null; // Clear selected category
-                      });
+                      clearSearchOptions();
                     },
                     style: ElevatedButton.styleFrom(
                       primary:
@@ -370,65 +381,7 @@ class _VehicleBrowseState extends State<VehicleBrowse> {
                                   ElevatedButton(
                                     onPressed: () async {
                                       var otherUserId = vehicleData['user_id'];
-                                      var chatId;
-
-                                      // Check for existing chat
-                                      var chatQuery = await FirebaseFirestore
-                                          .instance
-                                          .collection('chats')
-                                          .where('participants',
-                                              arrayContainsAny: [
-                                                FirebaseAuth
-                                                    .instance.currentUser!.uid,
-                                                otherUserId
-                                              ])
-                                          .limit(1)
-                                          .get();
-
-                                      if (chatQuery.docs.isNotEmpty) {
-                                        chatId = chatQuery.docs.first.id;
-                                      } else {
-                                        // Create new chat
-                                        var newChatDoc = await FirebaseFirestore
-                                            .instance
-                                            .collection('chats')
-                                            .add({
-                                          'participants': [
-                                            FirebaseAuth
-                                                .instance.currentUser!.uid,
-                                            otherUserId
-                                          ],
-                                          'lastMessage': '',
-                                          'lastMessageTimestamp':
-                                              FieldValue.serverTimestamp(),
-                                        });
-                                        chatId = newChatDoc.id;
-                                      }
-
-                                      // Fetch other user details
-                                      var userDoc = await FirebaseFirestore
-                                          .instance
-                                          .collection('users')
-                                          .doc(otherUserId)
-                                          .get();
-
-                                      if (userDoc.exists) {
-                                        var userData = userDoc.data()
-                                            as Map<String, dynamic>;
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => Contact(
-                                              chatId: chatId,
-                                              otherUserId: otherUserId,
-                                              otherUserName:
-                                                  userData['username'],
-                                              otherUserPhoneNumber:
-                                                  userData['phone_number'],
-                                            ),
-                                          ),
-                                        );
-                                      }
+                                      await _contactOwner(context, otherUserId);
                                     },
                                     style: ElevatedButton.styleFrom(
                                       primary: Colors.greenAccent,
@@ -513,15 +466,7 @@ class _VehicleBrowseState extends State<VehicleBrowse> {
       searchController.clear();
       minPriceController.clear();
       maxPriceController.clear();
+      selectedCategory = null; // Clear selected category
     });
-    Navigator.pushReplacement(
-      context,
-      PageRouteBuilder(
-        pageBuilder: (context, animation1, animation2) =>
-            VehicleBrowse(currentIndex: 1),
-        transitionDuration: Duration.zero,
-        reverseTransitionDuration: Duration.zero,
-      ),
-    );
   }
 }

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:vehiclerent/widgets/custom_bottom_nav_bar.dart'; // Import the custom bottom navigation bar
-import 'package:vehiclerent/rent_related/RentVehicle.dart';
-import 'package:vehiclerent/functions/contact.dart';
+import 'package:vehiclerent/rentrelated/RentVehicle.dart';
+import 'package:vehiclerent/functions/Contact.dart';
 
 class FavoriteList extends StatefulWidget {
   final int currentIndex;
@@ -21,6 +21,52 @@ class _FavoriteListState extends State<FavoriteList> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     scaffoldMessenger = ScaffoldMessenger.of(context);
+  }
+
+  Future<void> _contactOwner(BuildContext context, String otherUserId) async {
+    var user = FirebaseAuth.instance.currentUser;
+    var chatId;
+
+    // Check for existing chat
+    var chatQuery = await FirebaseFirestore.instance
+        .collection('chats')
+        .where('participants', arrayContainsAny: [user!.uid, otherUserId])
+        .limit(1)
+        .get();
+
+    if (chatQuery.docs.isNotEmpty) {
+      chatId = chatQuery.docs.first.id;
+    } else {
+      // Create new chat
+      var newChatDoc =
+          await FirebaseFirestore.instance.collection('chats').add({
+        'participants': [user.uid, otherUserId],
+        'lastMessage': '',
+        'lastMessageTimestamp': FieldValue.serverTimestamp(),
+      });
+      chatId = newChatDoc.id;
+    }
+
+    // Fetch other user details
+    var userDoc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(otherUserId)
+        .get();
+
+    if (userDoc.exists) {
+      var userData = userDoc.data() as Map<String, dynamic>;
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => Contact(
+            chatId: chatId,
+            otherUserId: otherUserId,
+            otherUserName: userData['username'] ?? 'Unknown',
+            otherUserPhoneNumber: userData['phone_number'] ?? 'N/A',
+          ),
+        ),
+      );
+    }
   }
 
   @override
@@ -263,63 +309,8 @@ class _FavoriteListState extends State<FavoriteList> {
                                         onPressed: () async {
                                           var otherUserId =
                                               vehicleData['user_id'];
-                                          var chatId;
-
-                                          // Check for existing chat
-                                          var chatQuery =
-                                              await FirebaseFirestore.instance
-                                                  .collection('chats')
-                                                  .where('participants',
-                                                      arrayContainsAny: [
-                                                        user!.uid,
-                                                        otherUserId
-                                                      ])
-                                                  .limit(1)
-                                                  .get();
-
-                                          if (chatQuery.docs.isNotEmpty) {
-                                            chatId = chatQuery.docs.first.id;
-                                          } else {
-                                            // Create new chat
-                                            var newChatDoc =
-                                                await FirebaseFirestore.instance
-                                                    .collection('chats')
-                                                    .add({
-                                              'participants': [
-                                                user.uid,
-                                                otherUserId
-                                              ],
-                                              'lastMessage': '',
-                                              'lastMessageTimestamp':
-                                                  FieldValue.serverTimestamp(),
-                                            });
-                                            chatId = newChatDoc.id;
-                                          }
-
-                                          // Fetch other user details
-                                          var userDoc = await FirebaseFirestore
-                                              .instance
-                                              .collection('users')
-                                              .doc(otherUserId)
-                                              .get();
-
-                                          if (userDoc.exists) {
-                                            var userData = userDoc.data()
-                                                as Map<String, dynamic>;
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) => Contact(
-                                                  chatId: chatId,
-                                                  otherUserId: otherUserId,
-                                                  otherUserName:
-                                                      userData['username'],
-                                                  otherUserPhoneNumber:
-                                                      userData['phone_number'],
-                                                ),
-                                              ),
-                                            );
-                                          }
+                                          await _contactOwner(
+                                              context, otherUserId);
                                         },
                                         style: ElevatedButton.styleFrom(
                                           primary: Colors.greenAccent,

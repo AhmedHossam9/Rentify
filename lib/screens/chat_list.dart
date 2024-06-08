@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:vehiclerent/widgets/custom_bottom_nav_bar.dart';
-import 'package:vehiclerent/functions/contact.dart';
+import 'package:vehiclerent/contact.dart';
 
 class ChatList extends StatelessWidget {
   final int currentIndex;

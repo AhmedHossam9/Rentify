@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'DeleteProfile.dart'; // Import the DeleteProfile screen
+import 'package:vehiclerent/functions/DeleteProfile.dart';
 
 class EditProfile extends StatefulWidget {
   @override
