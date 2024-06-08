@@ -1,0 +1,64 @@
+[debug] [2024-05-23T18:51:50.772Z] ----------------------------------------------------------------------
+[debug] [2024-05-23T18:51:50.774Z] Command:       E:\nodeJS\node.exe C:\Users\pc\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js init functions
+[debug] [2024-05-23T18:51:50.774Z] CLI Version:   13.9.0
+[debug] [2024-05-23T18:51:50.774Z] Platform:      win32
+[debug] [2024-05-23T18:51:50.774Z] Node Version:  v20.11.0
+[debug] [2024-05-23T18:51:50.774Z] Time:          Thu May 23 2024 21:51:50 GMT+0300 (Eastern European Summer Time)
+[debug] [2024-05-23T18:51:50.775Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2024-05-23T18:51:50.783Z] >>> [apiv2][query] GET https://firebase-public.firebaseio.com/cli.json [none]
+[debug] [2024-05-23T18:51:50.872Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"flutter"}
+[debug] [2024-05-23T18:51:50.876Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2024-05-23T18:51:50.876Z] > authorizing via signed-in user (ahmed2009620@miuegypt.edu.eg)
+[debug] [2024-05-23T18:51:50.877Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"flutter"}
+[info] 
+     ######## #### ########  ######## ########     ###     ######  ########
+     ##        ##  ##     ## ##       ##     ##  ##   ##  ##       ##
+     ######    ##  ########  ######   ########  #########  ######  ######
+     ##        ##  ##    ##  ##       ##     ## ##     ##       ## ##
+     ##       #### ##     ## ######## ########  ##     ##  ######  ########
+
+You're about to initialize a Firebase project in this directory:
+
+  E:\flutter_projects\Vehicle Renting\Project\vehiclerent
+
+Before we get started, keep in mind:
+
+  * You are initializing within an existing Firebase project directory
+
+[info] 
+=== Project Setup
+[info] 
+[info] First, let's associate this project directory with a Firebase project.
+[info] You can create multiple project aliases by running firebase use --add, 
+[info] but for now we'll just set up a default project.
+[info] 
+[debug] [2024-05-23T18:51:51.263Z] <<< [apiv2][status] GET https://firebase-public.firebaseio.com/cli.json 200
+[debug] [2024-05-23T18:51:51.263Z] <<< [apiv2][body] GET https://firebase-public.firebaseio.com/cli.json {"cloudBuildErrorAfter":1594252800000,"cloudBuildWarnAfter":1590019200000,"defaultNode10After":1594252800000,"minVersion":"3.0.5","node8DeploysDisabledAfter":1613390400000,"node8RuntimeDisabledAfter":1615809600000,"node8WarnAfter":1600128000000}
+[debug] [2024-05-23T18:53:52.912Z] ----------------------------------------------------------------------
+[debug] [2024-05-23T18:53:52.915Z] Command:       E:\nodeJS\node.exe C:\Users\pc\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js init functions
+[debug] [2024-05-23T18:53:52.915Z] CLI Version:   13.9.0
+[debug] [2024-05-23T18:53:52.915Z] Platform:      win32
+[debug] [2024-05-23T18:53:52.915Z] Node Version:  v20.11.0
+[debug] [2024-05-23T18:53:52.915Z] Time:          Thu May 23 2024 21:53:52 GMT+0300 (Eastern European Summer Time)
+[debug] [2024-05-23T18:53:52.915Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2024-05-23T18:53:52.973Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"flutter"}
+[debug] [2024-05-23T18:53:52.977Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2024-05-23T18:53:52.978Z] > authorizing via signed-in user (ahmed2009620@miuegypt.edu.eg)
+[debug] [2024-05-23T18:53:52.978Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"flutter"}
+[info] 
+     ######## #### ########  ######## ########     ###     ######  ########
+     ##        ##  ##     ## ##       ##     ##  ##   ##  ##       ##
+     ######    ##  ########  ######   ########  #########  ######  ######
+     ##        ##  ##    ##  ##       ##     ## ##     ##       ## ##
+     ##       #### ##     ## ######## ########  ##     ##  ######  ########
+
+You're about to initialize a Firebase project in this directory:
+
+  E:\flutter_projects\Vehicle Renting\Project\vehiclerent
+
+Before we get started, keep in mind:
+
+  * You are initializing within an existing Firebase project directory
+
