@@ -5,6 +5,7 @@ import 'package:vehiclerent/widgets/custom_bottom_nav_bar.dart';
 import 'package:vehiclerent/rentrelated/RentVehicle.dart';
 import 'package:vehiclerent/functions/Contact.dart';
 import 'package:vehiclerent/widgets/custom_search_bar.dart';
+import 'package:vehiclerent/widgets/vehicle_card.dart';
 
 class VehicleBrowse extends StatefulWidget {
   final int currentIndex;
@@ -261,6 +262,7 @@ class _VehicleBrowseState extends State<VehicleBrowse> {
                       DocumentSnapshot vehicleDoc = filteredVehicles[index];
                       Map<String, dynamic> vehicleData =
                           vehicleDoc.data() as Map<String, dynamic>;
+
                       bool isFavorited = (FirebaseAuth
                                   .instance.currentUser?.uid !=
                               null &&
@@ -271,132 +273,32 @@ class _VehicleBrowseState extends State<VehicleBrowse> {
 
                       bool isRented = vehicleData['status'] == 'RENTED';
 
-                      return Card(
-                        elevation: 5,
-                        margin: EdgeInsets.all(10.0),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15.0),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Stack(
-                                children: [
-                                  if (vehicleData['image_url'] != null)
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(15.0),
-                                      child: Image.network(
-                                        vehicleData['image_url'],
-                                        width: double.infinity,
-                                        height: 200,
-                                        fit: BoxFit.cover,
-                                      ),
-                                    )
-                                  else
-                                    Container(
-                                      height: 200,
-                                      decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(15.0),
-                                        color: Colors.grey.shade300,
-                                      ),
-                                      child: Icon(Icons.directions_car,
-                                          size: 100, color: Colors.grey),
-                                    ),
-                                  if (isRented)
-                                    Positioned.fill(
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          color: Colors.black54,
-                                          borderRadius:
-                                              BorderRadius.circular(15.0),
-                                        ),
-                                        child: Center(
-                                          child: Text(
-                                            'UNAVAILABLE',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 20,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                ],
+                      return VehicleCard(
+                        title: vehicleData['name'] ?? 'No Name',
+                        manufacturer: vehicleData['manufacturer'] ?? 'Unknown',
+                        imageUrl: vehicleData['image_url'] ?? '',
+                        price: vehicleData['price_per_day']?.toString() ?? '0',
+                        isDarkMode: isDarkMode,
+                        isFavorited: isFavorited,
+                        isRented: isRented,
+                        onRent: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => RentVehicle(
+                                vehicleId: vehicleDoc.id,
+                                pricePerDay: vehicleData['price_per_day'],
                               ),
-                              SizedBox(height: 10),
-                              Text(
-                                vehicleData['name'] ?? 'No Name',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 20),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              SizedBox(height: 5),
-                              Text(
-                                'Year: ${vehicleData['model_year'] ?? 'N/A'}',
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(color: Colors.grey.shade600),
-                              ),
-                              Text(
-                                'Category: ${vehicleData['category'] ?? 'N/A'}',
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(color: Colors.grey.shade600),
-                              ),
-                              Text(
-                                'Price: \$${vehicleData['price_per_day'] ?? 'N/A'} / day',
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(color: Colors.grey.shade600),
-                              ),
-                              SizedBox(height: 10),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  if (!isRented)
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => RentVehicle(
-                                              vehicleId: vehicleDoc.id,
-                                              pricePerDay:
-                                                  vehicleData['price_per_day'],
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        primary: Colors.blueAccent,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10.0),
-                                        ),
-                                      ),
-                                      child: Text('Rent now'),
-                                    ),
-                                  ElevatedButton(
-                                    onPressed: () async {
-                                      var otherUserId = vehicleData['user_id'];
-                                      await _contactOwner(context, otherUserId);
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      primary: Colors.greenAccent,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(10.0),
-                                      ),
-                                    ),
-                                    child: Text('Contact'),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
+                            ),
+                          );
+                        },
+                        onContact: () async {
+                          var otherUserId = vehicleData['user_id'];
+                          await _contactOwner(context, otherUserId);
+                        },
+                        onToggleFavorite: () {
+                          _toggleFavorite(vehicleDoc.id);
+                        },
                       );
                     },
                   );

@@ -82,7 +82,10 @@ class _RentVehicleState extends State<RentVehicle> {
   Future<void> _submitForm() async {
     if (_formKey.currentState!.validate() &&
         _selectedRegionName != null &&
-        _selectedRegionCoordinates != null) {
+        _selectedRegionCoordinates != null &&
+        _startDate != null &&
+        _endDate != null &&
+        _startDate!.isBefore(_endDate!)) {
       _formKey.currentState!.save();
       try {
         // Update the vehicle status
@@ -132,6 +135,18 @@ class _RentVehicleState extends State<RentVehicle> {
       if (_selectedRegionName == null || _selectedRegionCoordinates == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Please select a location on the map')),
+        );
+      }
+      if (_startDate == null || _endDate == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Please select both start and end dates')),
+        );
+      }
+      if (_startDate != null &&
+          _endDate != null &&
+          _startDate!.isAfter(_endDate!)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Start date must be before end date')),
         );
       }
     }

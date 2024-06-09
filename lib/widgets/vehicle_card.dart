@@ -82,6 +82,17 @@ class VehicleCard extends StatelessWidget {
                       ),
                     ),
                   ),
+                Positioned(
+                  top: 10,
+                  right: 10,
+                  child: IconButton(
+                    icon: Icon(
+                      isFavorited ? Icons.favorite : Icons.favorite_border,
+                      color: isFavorited ? Colors.red : Colors.red,
+                    ),
+                    onPressed: onToggleFavorite,
+                  ),
+                ),
               ],
             ),
             SizedBox(height: 10),
